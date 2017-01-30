@@ -1,14 +1,19 @@
 // Include the http module. It's part of core, so no npm install needed
 var http = require("http");
-// Include the fs module. FS = file system
+// Include the fs module. FS = file system. It is part of core.
+var fs = require("fs");
 
 function renderHomePage(req, res){
 	res.writeHead(200,{'content-type':'text/html'});
+	var theHomePageHTML = fs.readFileSync('homePage.html');
+	res.end(theHomePageHTML);
+
+	// The manual way without fs below
 	// someone came to our home page! Give the homepage content
-	res.write('<h1>This is the home page.</h1>')
-	res.write('<p>I\'m very proud of my node routing ability.</p>');
-	res.write('<p>I made a page in node. So there.</p>');
-	res.end();	
+	// res.write('<h1>This is the home page.</h1>')
+	// res.write('<p>I\'m very proud of my node routing ability.</p>');
+	// res.write('<p>I made a page in node. So there.</p>');
+	// res.end();	
 }
 
 // Set up an http server and store it in the server var.
@@ -22,6 +27,11 @@ var server = http.createServer((req, res)=>{
 	if(req.url === '/'){
 		// cut and put in a function called renderHomePage
 		renderHomePage(req, res);
+	}else if(req.url === '/logo.png'){
+		// the request is for the image. Serve it up
+		var img = fs.readFileSync('logo.png');
+		res.writeHead(200,{'content-type': 'image/png'});
+		res.end(img);
 	}else{
 		res.writeHead(404,{'content-type':'text/html'});
 		res.end('Sorry. This page does not exist.');
